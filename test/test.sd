@@ -1,0 +1,41 @@
+@h1 Test File
+
+@paragraph
+  This is a generic test file to validate the functionality of the markup language parser.
+
+@h2 Section 1: Overview
+
+@paragraph
+  This section provides an example paragraph with inline styles and escaped characters.
+
+  @bold[This is bold text.]
+
+  Escaping special syntax: \\@link[@bold[example] "https://example.com"]
+
+  Brackets in normal context: [Sample Text]
+
+@h2 Section 2: Lists
+
+@h3 Unordered List
+  @list
+    * First item
+    * Second item
+    * Third item
+
+@h3 Ordered List
+  @list
+    1. Step one
+    2. Step two
+    3. Step three
+
+@h2 Section 3: Code Examples
+
+@code <<Generic Code Block>>
+
+@code ["javascript"]
+
+<<
+  function example() {
+    console.log("Hello, world!");
+  }
+>>
