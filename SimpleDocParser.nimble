@@ -1,6 +1,6 @@
 # Package
 
-version       = "0"
+version       = "0.1.1"
 author        = "NM711"
 description   = "SimpleDoc is a small markup language that promotes simplicity and readability, it is also meant to be simple to parse so anyone can implement a parser for it."
 license       = "MIT"

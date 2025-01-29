@@ -30,12 +30,116 @@
 
 @h2 Section 3: Code Examples
 
-@code <<Generic Code Block>>
-
-@code ["javascript"]
+@code << Generic Code Block >>
+    
+@code ["C"]
 
 <<
-  function example() {
-    console.log("Hello, world!");
+  #include <stdio.h>
+  #include <ctype.h>
+  #include <string.h>
+  #include <stdlib.h>
+
+  // Define token types
+  typedef enum {
+    TOKEN_IDENTIFIER,
+    TOKEN_NUMBER,
+    TOKEN_OPERATOR,
+    TOKEN_UNKNOWN,
+    TOKEN_EOF
+  } TokenType;
+
+  // Define a structure for tokens
+  typedef struct {
+    TokenType type;
+    char value[64];
+  } Token;
+
+  // Function to print token type as a string
+  const char* tokenTypeToString(TokenType type) {
+    switch (type) {
+        case TOKEN_IDENTIFIER: return "IDENTIFIER";
+        case TOKEN_NUMBER: return "NUMBER";
+        case TOKEN_OPERATOR: return "OPERATOR";
+        case TOKEN_UNKNOWN: return "UNKNOWN";
+        case TOKEN_EOF: return "EOF";
+        default: return "INVALID";
+    }
+  }
+
+  // Function to create a token
+  Token createToken(TokenType type, const char* value) {
+    Token token;
+    token.type = type;
+    strncpy(token.value, value, sizeof(token.value) - 1);
+    token.value[sizeof(token.value) - 1] = '\0'; // Ensure null termination
+    return token;
+  }
+
+  // Lexer function
+  void tokenize(const char* input) {
+    size_t i = 0;
+    size_t length = strlen(input);
+
+    while (i < length) {
+        char c = input[i];
+
+        // Skip whitespace
+        if (isspace(c)) {
+            i++;
+            continue;
+        }
+
+        // Check for identifiers (letters or underscores followed by alphanumeric or underscores)
+        if (isalpha(c) || c == '_') {
+            size_t start = i;
+            while (isalnum(input[i]) || input[i] == '_') {
+                i++;
+            }
+            size_t len = i - start;
+            char buffer[64];
+            strncpy(buffer, input + start, len);
+            buffer[len] = '\0';
+            printf("%s: %s\n", tokenTypeToString(TOKEN_IDENTIFIER), buffer);
+            continue;
+        }
+
+        // Check for numbers (digits)
+        if (isdigit(c)) {
+            size_t start = i;
+            while (isdigit(input[i])) {
+                i++;
+            }
+            size_t len = i - start;
+            char buffer[64];
+            strncpy(buffer, input + start, len);
+            buffer[len] = '\0';
+            printf("%s: %s\n", tokenTypeToString(TOKEN_NUMBER), buffer);
+            continue;
+        }
+
+        // Check for operators (+, -, *, /)
+        if (strchr("+-*/", c)) {
+            char buffer[2] = {c, '\0'};
+            printf("%s: %s\n", tokenTypeToString(TOKEN_OPERATOR), buffer);
+            i++;
+            continue;
+        }
+
+        // Unknown token
+        char buffer[2] = {c, '\0'};
+        printf("%s: %s\n", tokenTypeToString(TOKEN_UNKNOWN), buffer);
+        i++;
+    }
+
+    // End of file token
+    printf("%s\n", tokenTypeToString(TOKEN_EOF));
+  }
+
+  int main() {
+    const char* input = "x = 42 + y * 3";
+    printf("Input: %s\n\n", input);
+    tokenize(input);
+    return 0;
   }
 >>

@@ -78,7 +78,7 @@ proc getInitialState(self: Lexer): LexerState =
   return case self.peek():
     of '\0':
       LexerState.EXIT
-    of ' ', '\n':
+    of ' ', '\n', '\t':
       LexerState.WS
     of '"':
       LexerState.STRING
@@ -96,12 +96,12 @@ proc getInitialState(self: Lexer): LexerState =
     else:
       LexerState.ALPHABET
 
-proc consumeRepeated(self: Lexer, current: char, state: var LexerState, outcomeState: LexerState): void =
+proc consumeRepeated(self: Lexer, current: char, state: var LexerState, outcomeState: LexerState, failureState: LexerState = LexerState.START): void =
   if self.peek() == current:
     self.advance()
     state = outcomeState
   else:
-    state = LexerState.START
+    state = failureState
 
 proc setPath*(self: Lexer, path: string): void =
   try:
@@ -144,7 +144,9 @@ proc execute*(self: Lexer): void =
             self.consumeRepeated('<', state, LexerState.CODE_BLOCK_OPEN)
           of '>':
             self.advance()
-            self.consumeRepeated('>', state, LexerState.CODE_BLOCK_CLOSE)
+            self.consumeRepeated('>', state, LexerState.CODE_BLOCK_CLOSE, LexerState.CODE_BLOCK_OPEN)
+            if state == LexerState.CODE_BLOCK_OPEN:
+              self.constructedLexeme &= ">"
           else:
             discard
 
@@ -226,8 +228,14 @@ proc execute*(self: Lexer): void =
 
         self.appendAdvance()
 
-        if self.peek() == ' ':
+        # consume a single whitespace
+        if self.peek() == ' ' or self.peek() == '\n':
           self.appendAdvance()
+
+        while self.peek() == ' ':
+          self.advance()
+          if self.peek() == '\n':
+            self.appendAdvance()
         
         self.pushToken(id)
 
@@ -244,7 +252,7 @@ proc execute*(self: Lexer): void =
 
       of LexerState.WS:
         case self.peek():
-          of '\n', ' ':
+          of '\n', ' ', '\t':
             self.advance()
           else:
             state = LexerState.START
