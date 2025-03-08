@@ -1,4 +1,5 @@
 import std/strutils
+from tables import keys
 import ../node
 
 type PrinterAST* = ref object
@@ -72,7 +73,12 @@ proc visit(self: PrinterAST, node: ImageNode): void =
   self.depth += 1
   node.caption.accept(self)
   self.depth -= 1
-  
+
+
+proc visit(self: PrinterAST, node: MetaNode): void =
+  for key in node.data.keys:
+    self.printNode(node.kind, key)  
+
 proc print*(self: PrinterAST, nodes: seq[Node]): void =
   for node in nodes:
     node.accept(self)
@@ -102,5 +108,8 @@ method accept(self: EmphasisNode, visitor: PrinterAST): void =
   visitor.visit(self)
  
 method accept(self: ImageNode, visitor: PrinterAST): void =
+  visitor.visit(self)
+ 
+method accept(self: MetaNode, visitor: PrinterAST): void =
   visitor.visit(self)
  

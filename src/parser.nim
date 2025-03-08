@@ -2,6 +2,7 @@ import lexer
 import token
 import node
 import std/strutils
+import std/tables
 
 # TODO: IMPROVE ERROR MESSAGES
 
@@ -141,7 +142,7 @@ proc parseImage(self: Parser): Node =
   self.advance()
 
   if (self.compare(TokenID.CAPTION)):
-    node.caption = BodyNode(kind: NodeKind.TEXT)
+    node.caption = BodyNode(kind: NodeKind.IMAGE_CAPTION)
     self.advance()
     self.parseTopContent(node.caption.body)
   
@@ -285,7 +286,7 @@ proc parseTopElement(self: Parser): Node =
     else:
       self.parseParagraph()
 
-proc parseElement(self: Parser): Node =
+proc parseGeneralElement(self: Parser): Node =
   return 
     if self.isSubElement():
       self.parseSubElement()
@@ -296,6 +297,43 @@ proc parseElement(self: Parser): Node =
     else:
       quit("Invalid top element!")
 
+proc parseMetaElement(self: Parser): Node =
+  var node = MetaNode(kind: NodeKind.META, data: initTable[string, string]())
+
+  while self.compare(TokenID.META):
+    self.advance()
+
+    self.expect(TokenID.LEFT_SQUARE_BRACKET)
+    self.advance()
+
+    self.expect(TokenID.LITERAL)
+    var key = self.peek().lexeme
+
+    if key in node.data:
+      quit("Meta element with the key \"" & key & "\" already exists!")
+    
+    self.advance()
+
+    self.expect(TokenID.COMMA)
+    self.advance()
+
+    self.expect(TokenID.STRING_LITERAL)
+    var value = self.peek().lexeme
+    self.advance()
+
+    node.data[key] = value
+    self.expect(TokenID.RIGHT_SQUARE_BRACKET)
+    self.advance()
+    
+  return node
+  
+proc parseElement(self: Parser): Node =
+  return
+    if (self.peek().id == TokenID.META):
+      self.parseMetaElement()
+    else:
+      self.parseGeneralElement()
+  
 proc parse(self: Parser): Node =
   return self.parseElement()
       

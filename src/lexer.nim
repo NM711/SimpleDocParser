@@ -36,6 +36,7 @@ let keywords*: Table[string, TokenID] = {
   "@i": TokenID.ITALIC,
   "@b": TokenID.BOLD,
   "@bi": TokenID.BOLDITALIC,
+  "@meta": TokenID.META
 }.toTable()
 
 # let attributtedElements: seq[string] = @["@bold", "@bolditalic", "@italic", "@i", "@b", "@bi", "@link", "@img", "@code"]

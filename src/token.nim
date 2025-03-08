@@ -18,6 +18,7 @@ type TokenID* = enum
   LIST,
   IMAGE,
   CAPTION,
+  META,
   CODE,
   INTERACTIVE,
   H1,
