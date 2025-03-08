@@ -34,7 +34,7 @@ Additionally I will make sure a BNF grammar is included with this repository.
 ```
   @italic [Emphasis]
   @bold [Emphasis]
-  @italicbold [Emphasis]
+  @bolditalic [Emphasis]
 ```
 
 **OR** using the shorthand labels
@@ -183,16 +183,37 @@ it means a user will be able to interact with it when its compiled to HTML.
 
 Special characters can be escaped with a ***\\\\*** prefix
 
-
 ### **Example**
 
 ```
   \\@italic[Escaped]
 ```
 
+## Meta Data
+
+In order to include meta data in your document, such as page title, description, etc. You can use the meta element.
+Meta elements by default will always be the very first elements to be parsed, if they exist, additionally they will be parsed in consecutive nature.
+This means that meta elements must always appear together at the very top of the page or else a syntax error will be produced.
+
+Meta elements are useful for when you are compiling to html and must include some sort of meta information, or for any other tools
+that parse SimpleDoc but require some very specific information. For example, maybe a SimpleDoc SSG needs to know
+where a SimpleDoc file should be compiled and routed at. In that case having a @meta element describing the pages route, will be useful to the SSG.
+
+### Example
+
+```
+@meta [author, "NM711"]
+@meta [title, "My cool website"]
+@meta [description, "A website that is cool"]
+```
+
 ## Example Document
 
 ```
+@meta [author, "NM711"]
+@meta [title, "Example SimpleDoc"]
+@meta [description, "SimpleDoc example showcase"]
+
 @h1 Test File
 
 @paragraph

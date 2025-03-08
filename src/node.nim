@@ -1,4 +1,7 @@
+import std/tables
+
 type NodeKind* = enum
+  META,
   HEADER,
   PARAGRAPH,
   TEXT,
@@ -10,7 +13,8 @@ type NodeKind* = enum
   BOLD,
   BOLD_ITALIC,
   CODE,
-  IMAGE
+  IMAGE,
+  IMAGE_CAPTION
 
 type ListItemType* = enum
   UNORDERED,
@@ -28,6 +32,11 @@ type EmphasisNode* = ref object of Node
 
 type BodyNode* = ref object of Node
   body*: seq[Node]
+
+# This node will contain all the meta elements.
+# 
+type MetaNode* = ref object of Node
+  data*: Table[string, string]
 
 type CodeBlockNode* = ref object of Node
   content*: string
