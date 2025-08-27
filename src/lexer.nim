@@ -45,7 +45,7 @@ type Lexer* = ref object
   index: int = 0
   tokens: seq[Token] = @[]
   constructedLexeme: string = ""
-  file: string = ""
+  file*: string = ""
   currentPosition: Position = Position(line: 1, column: 1)
 
 proc peek(self: Lexer): char =
@@ -103,12 +103,6 @@ proc consumeRepeated(self: Lexer, current: char, state: var LexerState, outcomeS
     state = outcomeState
   else:
     state = failureState
-
-proc setPath*(self: Lexer, path: string): void =
-  try:
-    self.file = readFile(path) & ' ' & '\0'
-  except IOError:
-    quit(getCurrentExceptionMsg(), 1)
 
 proc getTokens*(self: Lexer): seq[Token] =
   return self.tokens

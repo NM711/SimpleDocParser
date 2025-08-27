@@ -342,11 +342,26 @@ proc clear*(self: Parser): void =
   self.index = 0
   self.tokens = @[]
   self.nodes = @[]
- 
-proc setPath*(self: Parser, path: string): void = 
-  self.lexer.setPath(path)
-  self.lexer.execute()
-  self.tokens = self.lexer.getTokens()
+
+# To Read Content Directly From A File
+proc setPath*(self: Parser, path: string): void =
+  try:
+    self.lexer.file = readFile(path) & ' ' & '\0'
+    self.lexer.execute()
+    self.tokens = self.lexer.getTokens()
+  except IOError:
+    quit(getCurrentExceptionMsg(), 1)
+
+# For Setting String Literals
+
+proc setContent*(self: Parser, content: string): void =
+  try:
+    self.lexer.file = content
+    self.lexer.execute()
+    self.tokens = self.lexer.getTokens()
+  except IOError:
+    quit(getCurrentExceptionMsg(), 1)
+
 
 proc getTokens*(self: Parser): seq[Token] =
   return self.tokens
